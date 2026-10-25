@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { saveWaitlistEntry } from '../services/waitlistStore'
 
 type WaitlistForm = {
   name: string
@@ -21,6 +22,7 @@ const fieldClassName =
 function WaitlistSection() {
   const [form, setForm] = useState(initialForm)
   const [submittedName, setSubmittedName] = useState('')
+  const [submitError, setSubmitError] = useState('')
   const shouldReduceMotion = useReducedMotion()
 
   function updateField(field: keyof WaitlistForm, value: string) {
@@ -29,7 +31,21 @@ function WaitlistSection() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    setSubmittedName(form.name.trim())
+    setSubmitError('')
+
+    try {
+      saveWaitlistEntry({
+        name: form.name.trim(),
+        workshop: form.workshop.trim(),
+        phone: form.phone.trim(),
+        email: form.email.trim(),
+      })
+      setSubmittedName(form.name.trim())
+    } catch {
+      setSubmitError(
+        'Não foi possível salvar neste navegador. Verifique o espaço disponível e tente novamente.',
+      )
+    }
   }
 
   function editForm() {
@@ -104,9 +120,8 @@ function WaitlistSection() {
                   Obrigado, {submittedName}!
                 </h3>
                 <p className="mt-2 max-w-md text-sm leading-6 text-slate-600 dark:text-slate-300">
-                  Seus dados foram validados. O formulário ainda não está
-                  conectado a um serviço de cadastro, então nenhuma informação
-                  foi enviada ou salva.
+                  Cadastro salvo apenas neste navegador para demonstração. Os
+                  dados não foram enviados para a equipe da Nova.
                 </p>
                 <button
                   className="mt-5 rounded-lg px-4 py-2 text-sm font-semibold text-green-800 underline underline-offset-4 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300"
@@ -126,6 +141,14 @@ function WaitlistSection() {
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: shouldReduceMotion ? 0 : 0.35 }}
               >
+                {submitError && (
+                  <p
+                    className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800 dark:border-red-400/30 dark:bg-red-950/30 dark:text-red-200"
+                    role="alert"
+                  >
+                    {submitError}
+                  </p>
+                )}
                 <label className="text-xs font-semibold text-slate-900 dark:text-slate-100">
                   Seu Nome Completo
                   <input
@@ -194,8 +217,8 @@ function WaitlistSection() {
                 </button>
 
                 <p className="border-t border-slate-100 pt-3 text-[0.68rem] leading-4 text-slate-500 dark:border-white/10 dark:text-slate-400">
-                  Seus dados não serão enviados nem salvos: o formulário ainda
-                  não está conectado a um serviço de cadastro.
+                  Demonstração local: seus dados ficam salvos apenas neste
+                  navegador e não são enviados para a equipe da Nova.
                 </p>
               </motion.form>
             )}

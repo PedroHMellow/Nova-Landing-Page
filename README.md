@@ -25,6 +25,13 @@ npm run build
 npm run preview
 ```
 
+## Lista de espera (demonstração local)
+
+O formulário salva os cadastros no `localStorage` do navegador atual. Os dados
+não são enviados para um servidor nem ficam disponíveis para a equipe da Nova.
+Essa implementação serve apenas para demonstração e deve ser substituída por
+uma integração com backend antes de publicar o formulário em produção.
+
 ## Bibliotecas instaladas
 
 - React e React DOM para a interface.
